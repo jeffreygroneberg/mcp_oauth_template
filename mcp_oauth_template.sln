@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mcp_bearing", "mcp_bearing.csproj", "{CC16B718-3F3F-696F-2D0B-DB044544C0B5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mcp_oauth_template", "mcp_oauth_template.csproj", "{CC16B718-3F3F-696F-2D0B-DB044544C0B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
