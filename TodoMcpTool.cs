@@ -1,58 +1,14 @@
 using System.ComponentModel;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
 using ModelContextProtocol.Server;
 
-namespace MyMcpServer.McpTools
+namespace McpOAuthTemplate.McpTools
 {
     [McpServerToolType]
     public class TodoMcpTool
     {
         private static readonly List<Todo> _todos = new();
         private static int _nextId = 1;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public TodoMcpTool(IHttpContextAccessor httpContextAccessor)
-        {
-            _httpContextAccessor = httpContextAccessor;
-        }
-
-        private string GetCurrentUsername()
-        {
-            var user = _httpContextAccessor.HttpContext?.User;
-            if (user?.Identity?.IsAuthenticated == true)
-            {
-                // Debug: Log all claims to console
-                Console.WriteLine("=== JWT TOKEN DEBUG ===");
-                Console.WriteLine(
-                    $"User.Identity.IsAuthenticated: {user.Identity.IsAuthenticated}"
-                );
-                Console.WriteLine($"User.Identity.Name: {user.Identity.Name}");
-                Console.WriteLine(
-                    $"User.Identity.AuthenticationType: {user.Identity.AuthenticationType}"
-                );
-                Console.WriteLine("All Claims:");
-                foreach (var claim in user.Claims)
-                {
-                    Console.WriteLine($"  {claim.Type}: {claim.Value}");
-                }
-                Console.WriteLine("=== END JWT DEBUG ===");
-
-                // Try to get the name claim (preferred username or name)
-                var username =
-                    user.FindFirst("preferred_username")?.Value
-                    ?? user.FindFirst("upn")?.Value
-                    ?? user.FindFirst("name")?.Value
-                    ?? user.FindFirst(ClaimTypes.Name)?.Value
-                    ?? user.FindFirst("sub")?.Value
-                    ?? "Unknown User";
-
-                Console.WriteLine($"Selected username: {username}");
-                return username;
-            }
-            Console.WriteLine("User is not authenticated");
-            return "Anonymous";
-        }
+    
 
         [McpServerTool]
         [Description("Creates a new todo item")]
@@ -61,7 +17,7 @@ namespace MyMcpServer.McpTools
             [Description("Priority level")] string priority = "medium"
         )
         {
-            var currentUser = GetCurrentUsername();
+            var currentUser = "DefaultUser";
             var todo = new Todo
             {
                 Id = _nextId++,
@@ -84,7 +40,7 @@ namespace MyMcpServer.McpTools
             [Description("Optional todo ID to get specific todo")] int? id = null
         )
         {
-            var currentUser = GetCurrentUsername();
+            var currentUser = "DefaultUser";
 
             if (id.HasValue)
             {
@@ -141,7 +97,7 @@ namespace MyMcpServer.McpTools
             [Description("Mark as completed (optional)")] bool? isCompleted = null
         )
         {
-            var currentUser = GetCurrentUsername();
+            var currentUser = "DefaultUser";
             var todo = _todos.FirstOrDefault(t => t.Id == id);
             if (todo == null)
                 return Task.FromResult($"Todo with ID {id} not found (requested by {currentUser})");
@@ -162,7 +118,7 @@ namespace MyMcpServer.McpTools
         [Description("Deletes a todo item")]
         public Task<string> DeleteTodoAsync([Description("ID of the todo to delete")] int id)
         {
-            var currentUser = GetCurrentUsername();
+            var currentUser = "DefaultUser";
             var todo = _todos.FirstOrDefault(t => t.Id == id);
             if (todo == null)
                 return Task.FromResult($"Todo with ID {id} not found (requested by {currentUser})");
